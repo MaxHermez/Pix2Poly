@@ -37,6 +37,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements first for better layer caching
 COPY requirements.txt .
+COPY requirements-cu118.txt .
+
+# install CUDA torch stack from PyTorch index
+RUN uv pip install --no-cache -r requirements-cu118.txt
 
 # Install Python dependencies using uv
 RUN uv pip install --no-cache -r requirements.txt
