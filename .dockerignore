@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+.eggs
+*.egg
+.mypy_cache
+.pytest_cache
+.ruff_cache
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Data and models (will be downloaded at runtime)
+data/
+runs/
+logs/
+*.pth
+*.pth.tar
+*.ckpt
+*.zip
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Test and development files
+tests/
+*.ipynb
+.coverage
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# Conda environment file (using requirements.txt instead)
+environment.yml

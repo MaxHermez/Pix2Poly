@@ -1,23 +1,27 @@
-# Use NVIDIA CUDA base image with Python
+# Use NVIDIA CUDA base image with cuDNN
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# Install system dependencies
+# Install Python 3.11 and minimal system dependencies
+# Note: The CUDA base image is Ubuntu 22.04 minimal - no Python included
+# We need:
+# - python3.11, python3.11-dev, python3.11-venv: Python runtime and dev headers
+# - build-essential: C compiler for packages that need compilation (pycocotools, etc.)
+# - libglib2.0-0: Required by opencv at runtime
+# - libgdal-dev, gdal-bin: Required by geopandas/pyogrio for geospatial operations
+# - curl: For downloading uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
     build-essential \
-    curl \
-    git \
-    wget \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgl1-mesa-glx \
     libgdal-dev \
     gdal-bin \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv (fast Python package manager)
@@ -26,13 +30,13 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # Set working directory
 WORKDIR /opt/program
 
-# Copy requirements first for better layer caching
-COPY requirements.txt .
-
-# Create virtual environment and install dependencies
-RUN uv venv /opt/venv --python 3.11
+# Create virtual environment with Python 3.11
+RUN uv venv /opt/venv --python python3.11
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy requirements first for better layer caching
+COPY requirements.txt .
 
 # Install Python dependencies using uv
 RUN uv pip install --no-cache -r requirements.txt
