@@ -34,6 +34,10 @@ COPY requirements.txt ./
 # Install dependencies (CPU/GPU-agnostic Python deps from PyPI)
 RUN uv pip install --no-cache -r requirements.txt
 
+# Pre-download the timm model to avoid rate limiting at runtime
+# This caches the model in the Docker image so it doesn't need to be downloaded each time
+RUN python -c "import timm; timm.create_model('vit_small_patch8_224.dino', pretrained=True)"
+
 # Copy the application code
 COPY . .
 
